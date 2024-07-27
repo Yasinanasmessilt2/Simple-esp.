@@ -16,58 +16,41 @@
 ]]--
 
 --> ScreenGui <--
-local screenGui = Instance.new("ScreenGui")
-screenGui.Parent = game:GetService("CoreGui")
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Parent = game.Players.LocalPlayer.PlayerGui
 
--->text label<--
-local textLabel = Instance.new("TextLabel")
-textLabel.Parent = screenGui
-textLabel.Size = UDim2.new(0, 150, 0, 50)
-textLabel.Position = UDim2.new(0.5, -75, 0.3, 0)
-textLabel.Text = "Made by Messilt2"
-textLabel.TextSize = 24
-textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-textLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-textLabel.BackgroundTransparency = 0.5
-textLabel.TextScaled = true  -- Scale text to fit the label
+-->  TextLabel <--
+local TextLabel = Instance.new("TextLabel")
+TextLabel.Parent = ScreenGui 
+TextLabel.Text = "-Made By Messilt2" 
+TextLabel.Size = UDim2.new(0, 800, 0, 200)
+TextLabel.AnchorPoint = Vector2.new(0.5, 0.5) 
+TextLabel.Position = UDim2.new(0.5, 0, 0.5, 0) 
+TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.TextStrokeTransparency = 0 
+TextLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0) 
+TextLabel.BackgroundTransparency = 1 
+TextLabel.TextSize = 40 
+TextLabel.TextTransparency = 1 
 
---> thanks button <--
-local thanksButton = Instance.new("TextButton")
-thanksButton.Parent = screenGui
-thanksButton.Size = UDim2.new(0, 80, 0, 50)
-thanksButton.Position = UDim2.new(0.5, -90, 0.5, 0)
-thanksButton.Text = "Thanks"
-thanksButton.TextSize = 24
-thanksButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-thanksButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-thanksButton.TextScaled = true  -- Scale text to fit the button
+--> Tween properties for fade in and fade out <--
+local TweenService = game:GetService("TweenService")
 
---> fuck him button <--
-local kickButton = Instance.new("TextButton")
-kickButton.Parent = screenGui
-kickButton.Size = UDim2.new(0, 80, 0, 50)
-kickButton.Position = UDim2.new(0.5, 10, 0.5, 0)
-kickButton.Text = "Fuck him"
-kickButton.TextSize = 24
-kickButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-kickButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-kickButton.TextScaled = true  -- Scale text to fit the button
+--> Fade in <--
+local fadeInTween = TweenService:Create(TextLabel, TweenInfo.new(2), {TextTransparency = 0})
+fadeInTween:Play()
+task.wait(2)
 
---> kick function <--
-local function kickPlayer()
-    game.Players.LocalPlayer:Kick("THATS WHAT U GET")
-end
+--> Wait 5s <--
+task.wait(3)
 
---> destroy ui <--
-local function destroyUI()
-    screenGui:Destroy()
-end
+--> Fade out <--
+local fadeOutTween = TweenService:Create(TextLabel, TweenInfo.new(2), {TextTransparency = 1})
+fadeOutTween:Play()
+task.wait(2)
 
---> Connect the kick function to the fuck him button <--
-kickButton.MouseButton1Click:Connect(kickPlayer)
-
---> Connect the destroy UI function to the thanks button <--
-thanksButton.MouseButton1Click:Connect(destroyUI)
+--> Destroy the TextLabel <--
+TextLabel:Destroy()
 
 --> ESP code <--
 
