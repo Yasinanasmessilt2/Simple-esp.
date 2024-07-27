@@ -1,0 +1,197 @@
+--[[
+
+███╗░░░███╗███████╗░██████╗░██████╗██╗
+████╗░████║██╔════╝██╔════╝██╔════╝██║
+██╔████╔██║█████╗░░╚█████╗░╚█████╗░██║
+██║╚██╔╝██║██╔══╝░░░╚═══██╗░╚═══██╗██║
+██║░╚═╝░██║███████╗██████╔╝██████╔╝██║
+╚═╝░░░░░╚═╝╚══════╝╚═════╝░╚═════╝░╚═╝
+
+██╗░░░░░████████╗██████╗░
+██║░░░░░╚══██╔══╝╚════██╗
+██║░░░░░░░░██║░░░░░███╔═╝
+██║░░░░░░░░██║░░░██╔══╝░░
+███████╗░░░██║░░░███████╗
+╚══════╝░░░╚═╝░░░╚══════╝
+]]--
+
+--> ScreenGui <--
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = game:GetService("CoreGui")
+
+-->text label<--
+local textLabel = Instance.new("TextLabel")
+textLabel.Parent = screenGui
+textLabel.Size = UDim2.new(0, 150, 0, 50)
+textLabel.Position = UDim2.new(0.5, -75, 0.3, 0)
+textLabel.Text = "Made by Messilt2"
+textLabel.TextSize = 24
+textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+textLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+textLabel.BackgroundTransparency = 0.5
+textLabel.TextScaled = true  -- Scale text to fit the label
+
+--> thanks button <--
+local thanksButton = Instance.new("TextButton")
+thanksButton.Parent = screenGui
+thanksButton.Size = UDim2.new(0, 80, 0, 50)
+thanksButton.Position = UDim2.new(0.5, -90, 0.5, 0)
+thanksButton.Text = "Thanks"
+thanksButton.TextSize = 24
+thanksButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+thanksButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+thanksButton.TextScaled = true  -- Scale text to fit the button
+
+--> fuck him button <--
+local kickButton = Instance.new("TextButton")
+kickButton.Parent = screenGui
+kickButton.Size = UDim2.new(0, 80, 0, 50)
+kickButton.Position = UDim2.new(0.5, 10, 0.5, 0)
+kickButton.Text = "Fuck him"
+kickButton.TextSize = 24
+kickButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+kickButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+kickButton.TextScaled = true  -- Scale text to fit the button
+
+--> kick function <--
+local function kickPlayer()
+    game.Players.LocalPlayer:Kick("THATS WHAT U GET")
+end
+
+--> destroy ui <--
+local function destroyUI()
+    screenGui:Destroy()
+end
+
+--> Connect the kick function to the fuck him button <--
+kickButton.MouseButton1Click:Connect(kickPlayer)
+
+--> Connect the destroy UI function to the thanks button <--
+thanksButton.MouseButton1Click:Connect(destroyUI)
+
+--> ESP code <--
+
+--> Service  <--
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local Workspace = game:GetService("Workspace")
+
+local localPlayer = Players.LocalPlayer
+local camera = Workspace.CurrentCamera
+
+local distanceThreshold = 12
+local nearestPlayers = {}
+
+
+--> create name and distance label above player’s head <--
+
+local function createNameDistanceTag(character)
+local head = character:FindFirstChild("Head") or character:WaitForChild("Head")
+local billboardGui = Instance.new("BillboardGui")
+billboardGui.Adornee = head
+billboardGui.Size = UDim2.new(0, 200, 0, 50)
+billboardGui.StudsOffset = Vector3.new(0, 2, 0)
+billboardGui.AlwaysOnTop = true
+billboardGui.Parent = character
+
+local textLabel = Instance.new("TextLabel")
+textLabel.Parent = billboardGui
+textLabel.Size = UDim2.new(1, 0, 1, 0)
+textLabel.BackgroundTransparency = 1
+textLabel.TextColor3 = Color3.new(1, 1, 1) -- White text
+textLabel.TextScaled = true
+textLabel.Font = Enum.Font.SourceSans
+
+RunService.RenderStepped:Connect(function()
+if localPlayer.Character and localPlayer.Character:FindFirstChild("HumanoidRootPart") then
+    local distance = (localPlayer.Character.HumanoidRootPart.Position - character.HumanoidRootPart.Position).Magnitude
+    textLabel.Text = string.format("%s\n%.2f studs", character.Name, distance)
+end
+end)
+end
+
+
+--> esp function <--
+
+local function highlightCharacter(character)
+local highlight = character:FindFirstChildOfClass("Highlight") or Instance.new("Highlight")
+highlight.Parent = character
+highlight.FillColor = Color3.new(1, 0, 0) -- Bright red
+highlight.FillTransparency = 0.5
+highlight.OutlineColor = Color3.new(1, 0, 0)
+highlight.OutlineTransparency = 0
+highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+end
+
+
+--> Function to update the nearest players <--
+
+local function updateNearestPlayersList()
+nearestPlayers = {}
+
+for _, otherPlayer in pairs(Players:GetPlayers()) do
+if otherPlayer ~= localPlayer and otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
+local distance = (localPlayer.Character.HumanoidRootPart.Position - otherPlayer.Character.HumanoidRootPart.Position).Magnitude
+if distance < distanceThreshold then
+table.insert(nearestPlayers, otherPlayer)
+end
+end
+end
+
+table.sort(nearestPlayers, function(a, b)
+local distanceA = (localPlayer.Character.HumanoidRootPart.Position - a.Character.HumanoidRootPart.Position).Magnitude
+local distanceB = (localPlayer.Character.HumanoidRootPart.Position - b.Character.HumanoidRootPart.Position).Magnitude
+return distanceA < distanceB
+end)
+end
+
+
+--> Function to set up highlighting and label for players <--
+
+local function setupPlayer(player)
+local function onCharacterAdded(character)
+character:WaitForChild("HumanoidRootPart")
+character:WaitForChild("Head")
+
+highlightCharacter(character)
+createNameDistanceTag(character)
+updateNearestPlayersList()
+end
+
+if player.Character then
+onCharacterAdded(player.Character)
+end
+
+player.CharacterAdded:Connect(onCharacterAdded)
+end
+
+
+--> Set up esp and tags for all players <--
+
+for _, player in pairs(Players:GetPlayers()) do
+setupPlayer(player)
+end
+
+
+--> Set up esp and labels for new players <--
+
+Players.PlayerAdded:Connect(function(player)
+setupPlayer(player)
+end)
+
+
+--> Handle player respawns <--
+local function onCharacterAdded(character)
+character:WaitForChild("HumanoidRootPart")
+character:WaitForChild("Head")
+highlightCharacter(character)
+createNameDistanceTag(character)
+end
+
+--> Watch for changes to characters <--
+localPlayer.CharacterAdded:Connect(onCharacterAdded)
+
+
+--> Update the list of nearest players each frame <--
+
+RunService.RenderStepped:Connect(updateNearestPlayersList)
